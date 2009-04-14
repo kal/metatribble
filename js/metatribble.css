@@ -1,0 +1,36 @@
+.metatribble-rdfa {
+	background: #eee;
+	border: dotted 1px green;
+     font-weight: bold;
+}
+
+
+#metatribble-infoboxes {
+   position: absolute;
+   top: 5px;
+   left: 5px;
+   background: #fff;
+   padding: 1px;
+   width: 130px;
+}
+
+.metatribble-infobox {
+   background: #ddf;
+   font-size: 12px;
+   border: solid 1px black;
+   clear: both;
+   margin-bottom: 3px;
+   -moz-border-radius: 2px;
+}
+
+.metatribble-title {
+   font-weight: bold;
+   background: #aaf;
+   padding: 5px;
+}
+
+.metatribble-infobox ul {
+   padding: 5px;
+}
+
+
