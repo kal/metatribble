@@ -1,3 +1,17 @@
+  
+/* Load the RDFQuery library as a jQuery plugin. Note that
+   this loads inside the Ubiquity sandbox, and will load when this
+   script is parsed rather than when the command is invoked.
+*/
+CmdUtils.loadJQuery(function(jQuery) {
+  var rdfQueryBase = "http://rdfquery.googlecode.com/svn/trunk/";
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.uri.js");
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.xmlns.js");
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.curie.js");
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.datatype.js");
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.rdf.js");
+  CmdUtils.injectJavascript(rdfQueryBase + "jquery.rdfa.js");
+});
 
 CmdUtils.CreateCommand({
     name: "open-calais-key",
@@ -24,9 +38,9 @@ CmdUtils.CreateCommand({
     }
 });
 
-
 CmdUtils.CreateCommand({
-  name: "open-calais",
+  name: "metatribble",
+  description: "Create semantic annotations for the people, places and events described on this page.",
   
   _getCalaisParams : function(processingDirectives, userDirectives) {
     var paramsXml = '<c:params xmlns:c="http://s.opencalais.com/1/pred/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><c:processingDirectives  ';
@@ -76,49 +90,23 @@ CmdUtils.CreateCommand({
         pblock.innerHTML += "<div class='warning' style='background-color:#ddd;border: 2px red solid;color:red;padding:5px'>No Open Calais API key set. Use the command 'open-calais-key <i>your api key</i>' to provide your API key.</div>";
     }
   },
+ 
+  scriptsLoadedCount : 0,
+  scriptsLoadedExpected : 11,
 
-  setupJavaScript: function() {
-      this.addScriptToHead("http://jqueryjs.googlecode.com/files/jquery-1.3.2.js");
-      // rdfquery code
-      var rdfQueryBase = "http://rdfquery.googlecode.com/svn/trunk/";
-      this.addScriptToHead(rdfQueryBase + "jquery.uri.js");
-      this.addScriptToHead(rdfQueryBase + "jquery.xmlns.js");
-      this.addScriptToHead(rdfQueryBase + "jquery.curie.js");
-      this.addScriptToHead(rdfQueryBase + "jquery.datatype.js");
-      this.addScriptToHead(rdfQueryBase + "jquery.rdf.js");
-      this.addScriptToHead(rdfQueryBase + "jquery.rdfa.js");
-      // Used by realEnhance to make fields draggable
-      this.addScriptToHead("http://jqueryui.com/latest/ui/ui.core.js");
-      this.addScriptToHead("http://jqueryui.com/latest/ui/ui.draggable.js");
-
-//      var metatribbleBase = "http://localhost/~inigosurguy/metatribble/";
-      var metatribbleBase = "http://github.com/kal/metatribble/blob/3bc91f45ecda5d71b79cdb3be7e783cf2cd5b5d8/js/";
-      this.addScriptToHead(metatribbleBase+"enhance.js");
-      this.addScriptToHead(metatribbleBase+"realEnhance.js");
-      this.addStyleToHead(metatribbleBase+"metatribble.css");
+  checkAllScriptsLoaded: function(commandContext) {
+    commandContext.scriptsLoadedCount++;
+    CmdUtils.log("Waiting for scripts to load: currently "+commandContext.scriptsLoadedCount+" but expecting "+commandContext.scriptsLoadedExpected);
+    if (commandContext.scriptsLoadedCount >= commandContext.scriptsLoadedExpected) {
+       CmdUtils.log("All scripts have now loaded!");
+       this.allScriptsLoaded();
+    }
   },
-   
-  addScriptToHead: function(src) {
-     var document = CmdUtils.getDocument();
-     var script = document.createElement('script');
-     script.type = 'text/javascript';
-     script.src = src;
-     document.getElementsByTagName('head')[0].appendChild(script);
-     CmdUtils.injectJavascript(src);
-  },
-   
-  addStyleToHead: function(src) {
-    var document = CmdUtils.getDocument();
-    var link = document.createElement('link');
-    link.type = 'text/css';
-    link.rel = 'stylesheet';
-    link.href = src;
-    document.getElementsByTagName('head')[0].appendChild(link);
-  },
-
-  execute: function() {
-    this.setupJavaScript();
+  
+  allScriptsLoaded: function() {
     text = CmdUtils.getHtmlSelection();
+    text = text.replace(/"/g,"'")
+
     var options = this._getCalaisAjaxOptions(text, this._getCalaisParams({
       contentType:"text/html",
       enableMetadataType:"true",
@@ -133,9 +121,61 @@ CmdUtils.CreateCommand({
     options["dataType"]="text";
     displayMessage("Sending " + Math.ceil(text.length / 1024) + "kB to Calais for processing.");
     jQuery.ajax(options);
+
   },
+  
+
+  
+  setupJavaScript: function() {
+      this.addScriptToHead("http://jqueryjs.googlecode.com/files/jquery-1.3.2.js");
+      // rdfquery code
+      var rdfQueryBase = "http://rdfquery.googlecode.com/svn/trunk/";
+      this.addScriptToHead(rdfQueryBase + "jquery.uri.js");
+      this.addScriptToHead(rdfQueryBase + "jquery.xmlns.js");
+      this.addScriptToHead(rdfQueryBase + "jquery.curie.js");
+      this.addScriptToHead(rdfQueryBase + "jquery.datatype.js");
+      this.addScriptToHead(rdfQueryBase + "jquery.rdf.js");
+      this.addScriptToHead(rdfQueryBase + "jquery.rdfa.js");
+      // Used by realEnhance to make fields draggable
+      this.addScriptToHead("http://jqueryui.com/latest/ui/ui.core.js");
+      this.addScriptToHead("http://jqueryui.com/latest/ui/ui.draggable.js");
+
+      var metatribbleBase = "http://localhost/~inigosurguy/metatribble/";
+      this.addScriptToHead(metatribbleBase+"enhance.js");
+      this.addScriptToHead(metatribbleBase+"realEnhance.js");
+    
+      this.addStyleToHead(metatribbleBase+"metatribble.css");
+  },
+   
+  addScriptToHead: function(src) {
+    var o = this;
+    CmdUtils.injectJavascript(src, function() { o.checkAllScriptsLoaded(o); } );
+  },
+    
+  addStyleToHead: function(src) {    
+    var document = CmdUtils.getDocument();
+    var link = document.createElement('link');
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    link.href = src;
+    document.getElementsByTagName('head')[0].appendChild(link);
+  },
+
+  execute: function() {
+    try {
+    CmdUtils.log("Adding JavaScript");
+      this.setupJavaScript();
+      CmdUtils.log("Waiting for JavaScript to load");
+    } catch(error) {
+        CmdUtils.log("Failed with "+error);
+    }
+  }
 
 
 });
+
+
+
+
 
 

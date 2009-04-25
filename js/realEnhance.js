@@ -3,10 +3,12 @@ function createList(topic) {
   var rdf = $('body').rdf();
   rdf.prefix('s', 'http://s.opencalais.com/1/type/em/e/');
   rdf.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#'); 
+  var uniqueNames = new Object();
   var names = rdf.where("?country a s:"+topic)
 	.where("?country rdfs:label ?label")
 	.filter(function() { return (!this.label.datatype) }) // Removing XMLLiterals - ?
-	.map(function() { return this.label.value; });
+	.map(function() { return this.label.value; })
+	.filter(function() { var exists = uniqueNames[this] == "true"; uniqueNames[this] = "true"; return !exists; });
 
   var h = "<div class='metatribble-title'>"+topic+"</div><ul>";
   names.each(function() { h = h + "<li>"+this+"</li>"; });
@@ -36,4 +38,5 @@ function logAllTriples() {
   var rdf = $('body').rdf();
   rdf.where("?s ?p ?o").each(function() { console.log("Woo "+this.s+" and "+this.p+" and "+this.o); })
 }
+
 
