@@ -1,17 +1,3 @@
-  
-/* Load the RDFQuery library as a jQuery plugin. Note that
-   this loads inside the Ubiquity sandbox, and will load when this
-   script is parsed rather than when the command is invoked.
-*/
-CmdUtils.loadJQuery(function(jQuery) {
-  var rdfQueryBase = "http://rdfquery.googlecode.com/svn/trunk/";
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.uri.js");
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.xmlns.js");
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.curie.js");
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.datatype.js");
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.rdf.js");
-  CmdUtils.injectJavascript(rdfQueryBase + "jquery.rdfa.js");
-});
 
 CmdUtils.CreateCommand({
     name: "open-calais-key",
