@@ -1,5 +1,5 @@
 CmdUtils.CreateCommand({
-    name: "dev-open-calais-key",
+    name: "open-calais-key",
     description: "Display / set the API key used to retrieve results from Open Calais",
     takes: {"apiKey": noun_arb_text},
     
@@ -24,7 +24,7 @@ CmdUtils.CreateCommand({
 });
 
 CmdUtils.CreateCommand({
-  name: "dev-metatribble",
+  name: "metatribble",
   description: "Create semantic annotations for the people, places and events described on this page.",
   
   _getCalaisParams : function(processingDirectives, userDirectives) {
