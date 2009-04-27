@@ -3,21 +3,26 @@
 var myrdf = "asd";
 var myresults = "someresults";
 
-function doAlertStuff() { alert("Woo"); }
+// Log to Firebug if available
+function safeLog(message) { 
+  if (window.console && console.log) {
+    console.log(message);
+  } 
+}
 
 function processCalaisResults(results) {
   try {
-  console.log("Received response from Calais");
+  safeLog("Received response from Calais");
   var rdf = parseRdf(results);
-  console.log("Extracting instances from parsed RDF");
+  safeLog("Extracting instances from parsed RDF");
   var instances = extractInstances(rdf);
-  console.log("Creating RDFa in page");
+  safeLog("Creating RDFa in page");
   createInstanceSpans(instances, rdf);
 
-  console.log("Creating infoboxes");
+  safeLog("Creating infoboxes");
   createInfoboxes();
   } catch(e) {
-     console.log("Failed to load databank with "+e);
+     safeLog("Failed to load databank with "+e);
   }
 }
 
@@ -26,22 +31,22 @@ function parseRdf(results) {
 //   var xmlString = new XMLSerializer().serializeToString(results);
   var xmlString = results;
   myresults = results;
-  console.log("Parsing RDF");
+  safeLog("Parsing RDF");
   var parser = new DOMParser();
   var doc = parser.parseFromString(xmlString, 'text/xml');
-  console.log("Loading databank");
+  safeLog("Loading databank");
   var databank = $.rdf.databank();
   databank.load(doc);
   var triples = databank.triples();
 
-  console.log("Setting up RDF object");
+  safeLog("Setting up RDF object");
   var rdf = $.rdf({triples: databank.triples(), namespaces: databank.namespaces}); 
   rdf.prefix("sys","http://s.opencalais.com/1/type/sys/");
   rdf.prefix("c","http://s.opencalais.com/1/pred/");
   rdf.prefix("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
   // Useful for debugging
   myrdf = rdf;
-  console.log("Done setting up RDF");
+  safeLog("Done setting up RDF");
   return rdf;
 }
 

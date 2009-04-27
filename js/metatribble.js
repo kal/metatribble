@@ -1,6 +1,5 @@
-
 CmdUtils.CreateCommand({
-    name: "open-calais-key",
+    name: "dev-open-calais-key",
     description: "Display / set the API key used to retrieve results from Open Calais",
     takes: {"apiKey": noun_arb_text},
     
@@ -25,7 +24,7 @@ CmdUtils.CreateCommand({
 });
 
 CmdUtils.CreateCommand({
-  name: "metatribble",
+  name: "dev-metatribble",
   description: "Create semantic annotations for the people, places and events described on this page.",
   
   _getCalaisParams : function(processingDirectives, userDirectives) {
@@ -76,16 +75,28 @@ CmdUtils.CreateCommand({
         pblock.innerHTML += "<div class='warning' style='background-color:#ddd;border: 2px red solid;color:red;padding:5px'>No Open Calais API key set. Use the command 'open-calais-key <i>your api key</i>' to provide your API key.</div>";
     }
   },
+  
+  getScriptsLoadedCount : function() {
+    return CmdUtils.getDocument().metatribbleScriptsLoadedCount || 0;
+  },
  
-  scriptsLoadedCount : 0,
+  incrementScriptsLoaded : function() {
+    var doc = CmdUtils.getDocument();
+    if (! doc.metatribbleScriptsLoadedCount) {
+      doc.metatribbleScriptsLoadedCount = 1;     
+    } else {
+      doc.metatribbleScriptsLoadedCount++;
+    }
+  },
+  
   scriptsLoadedExpected : 11,
 
   checkAllScriptsLoaded: function(commandContext) {
-    commandContext.scriptsLoadedCount++;
-    CmdUtils.log("Waiting for scripts to load: currently "+commandContext.scriptsLoadedCount+" but expecting "+commandContext.scriptsLoadedExpected);
-    if (commandContext.scriptsLoadedCount >= commandContext.scriptsLoadedExpected) {
+    commandContext.incrementScriptsLoaded();
+    CmdUtils.log("Waiting for scripts to load: currently "+commandContext.getScriptsLoadedCount()+" but expecting "+commandContext.scriptsLoadedExpected);
+    if (commandContext.getScriptsLoadedCount() >= commandContext.scriptsLoadedExpected) {
        CmdUtils.log("All scripts have now loaded!");
-       this.allScriptsLoaded();
+       commandContext.allScriptsLoaded();
     }
   },
   
@@ -102,15 +113,14 @@ CmdUtils.CreateCommand({
         allowSearch:true,
         externalID:"ubiq-open-calais",
         submitter:"kal@techquila.com"}));
+    // We can't inject rdfquery into the Ubiquity sandbox, so instead call out to a function
+    // using rdfquery that's been loaded into the browser's context
     options["success"] =  CmdUtils.getWindowInsecure().processCalaisResults;
     options["error"] = this._processCalaisError;
     options["dataType"]="text";
     displayMessage("Sending " + Math.ceil(text.length / 1024) + "kB to Calais for processing.");
     jQuery.ajax(options);
-
   },
-  
-
   
   setupJavaScript: function() {
       this.addScriptToHead("http://jqueryjs.googlecode.com/files/jquery-1.3.2.js");
@@ -126,21 +136,20 @@ CmdUtils.CreateCommand({
       this.addScriptToHead("http://jqueryui.com/latest/ui/ui.core.js");
       this.addScriptToHead("http://jqueryui.com/latest/ui/ui.draggable.js");
 
-  //    var metatribbleBase = "http://localhost/~inigosurguy/metatribble/";
+      //var metatribbleBase = "http://localhost/~inigosurguy/mt/metatribble/js/";
       var metatribbleBase = "http://github.com/kal/metatribble/raw/master/js/";
-   
       this.addScriptToHead(metatribbleBase+"enhance.js");
       this.addScriptToHead(metatribbleBase+"realEnhance.js");
     
       this.addStyleToHead(metatribbleBase+"metatribble.css");
   },
-   
+    
   addScriptToHead: function(src) {
     var o = this;
     CmdUtils.injectJavascript(src, function() { o.checkAllScriptsLoaded(o); } );
   },
     
-  addStyleToHead: function(src) {    
+  addStyleToHead: function(src) {     
     var document = CmdUtils.getDocument();
     var link = document.createElement('link');
     link.type = 'text/css';
@@ -151,9 +160,14 @@ CmdUtils.CreateCommand({
 
   execute: function() {
     try {
-    CmdUtils.log("Adding JavaScript");
-      this.setupJavaScript();
-      CmdUtils.log("Waiting for JavaScript to load");
+      CmdUtils.log("Adding JavaScript");
+      if (this.getScriptsLoadedCount() >= this.scriptsLoadedExpected) {
+        CmdUtils.log("All scripts are already loaded!");
+        this.allScriptsLoaded();
+      } else {
+        this.setupJavaScript();
+        CmdUtils.log("Waiting for JavaScript to load");
+      }
     } catch(error) {
         CmdUtils.log("Failed with "+error);
     }
@@ -161,9 +175,4 @@ CmdUtils.CreateCommand({
 
 
 });
-
-
-
-
-
 
