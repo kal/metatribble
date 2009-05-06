@@ -1,5 +1,6 @@
 
 function createList(topic) {
+	safeLog("createList " + topic);
   var rdf = $('body').rdf();
   rdf.prefix('s', 'http://s.opencalais.com/1/type/em/e/');
   rdf.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#'); 
@@ -14,19 +15,35 @@ function createList(topic) {
   names.each(function() { h = h + "<li>"+this+"</li>"; });
   h = h + "</ul>";
 
-  var infoBox = document.createElement("div");
-  infoBox.setAttribute("class","metatribble-infobox");
-  infoBox.innerHTML = h;
-  $("#metatribble-infoboxes").append(infoBox);
+	if (!$('#mti_' + topic).length) {
+  	var infoBox = document.createElement("div");
+  	infoBox.setAttribute("class", "metatribble-infobox");
+  	infoBox.setAttribute("id", "mti_" + topic);
+	  $("#metatribble-infoboxes").append(infoBox);
+  }
+	$('#mti_'+topic).html(h);
 }
 
 
 function createInfoboxes() {
-  var infoBoxes = document.createElement("div");
-  infoBoxes.setAttribute("id","metatribble-infoboxes");
-  $("body").append(infoBoxes);
-  $("#metatribble-infoboxes").draggable({ handle: '.metatribble-title' });
-
+	if (!$("#metatribble-infoboxes").length) {
+		var infoBoxes = document.createElement("div");
+		infoBoxes.setAttribute("id", "metatribble-infoboxes");
+		$("body").append(infoBoxes);
+		$("#metatribble-infoboxes").draggable({
+			handle: '.metatribble-title'
+		});
+	}
+	/* Trying to find a better way to determine what info boxes to show
+	 * One thought is to find all types in the RDF and then check their 
+	 * URI against an internal map that tells you which info box they go into 
+	 */
+	/*
+	var rdf = $('body').rdf();
+	var uniqueTypes = new Object();
+	var types = rdf.where('?inst a ?type').filter(function(){console.log(this); var exists = uniqueTypes[this.type]=="true"; uniqueTypes[this.type]="true"; return !exists;});
+	types.each(function(){console.log("Found a type: " + this)});
+	*/
   createList("Country");
   createList("City");
   createList("Person");

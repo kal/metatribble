@@ -137,7 +137,8 @@ CmdUtils.CreateCommand({
       this.addScriptToHead("http://jqueryui.com/latest/ui/ui.draggable.js");
 
       //var metatribbleBase = "http://localhost/~inigosurguy/mt/metatribble/js/";
-      var metatribbleBase = "http://github.com/kal/metatribble/raw/master/js/";
+	  var metatribbleBase = "http://localhost/metatribble/js/";
+      //var metatribbleBase = "http://github.com/kal/metatribble/raw/master/js/";
       this.addScriptToHead(metatribbleBase+"enhance.js");
       this.addScriptToHead(metatribbleBase+"realEnhance.js");
     
