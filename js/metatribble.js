@@ -1,7 +1,7 @@
 CmdUtils.CreateCommand({
     name: "dev-open-calais-key",
     description: "Display / set the API key used to retrieve results from Open Calais",
-    takes: {"apiKey": noun_arb_text},
+    arguments: [ { role: 'object', nountype: noun_arb_text, label: 'apiKey' } ],
     
     preview: function(pblock) {
         logins = CmdUtils.retrieveLogins("open-calais-api");
@@ -12,14 +12,17 @@ CmdUtils.CreateCommand({
         }
     },
     
-    execute: function(apiKey) {
+    execute: function(args) {
+	var apiKey = args.object;
         if (apiKey) {
             CmdUtils.savePassword({
                 name:"open-calais-api",
                 username:"open-calais-user",
                 password:apiKey.text});
-            displayMessage("Open Calais key updated!");
-        }
+            displayMessage("Open Calais key updated to "+apiKey.text);
+        } else {
+	    displayMessage("Must supply an API key");
+	}
     }
 });
 
@@ -55,8 +58,9 @@ CmdUtils.CreateCommand({
                 paramsXML : paramsXml
             }
         };
+    } else {
+	CmdUtils.log("Could not retrieve API key for OpenCalais");
     }
-    // TODO: else raise the alarm
   },
   
   _processCalaisError: function(request, textStatus, errorThrown) {
@@ -102,6 +106,10 @@ CmdUtils.CreateCommand({
   
   allScriptsLoaded: function() {
     text = CmdUtils.getHtmlSelection();
+    if (text==null) {
+	CmdUtils.log("No text selection made - using whole document");
+	text = CmdUtils.getDocument().body.innerHTML;
+    }
     text = text.replace(/"/g,"'")
 
     var options = this._getCalaisAjaxOptions(text, this._getCalaisParams({
@@ -136,8 +144,8 @@ CmdUtils.CreateCommand({
       this.addScriptToHead("http://jqueryui.com/latest/ui/ui.core.js");
       this.addScriptToHead("http://jqueryui.com/latest/ui/ui.draggable.js");
 
-      //var metatribbleBase = "http://localhost/~inigosurguy/mt/metatribble/js/";
-	  var metatribbleBase = "http://localhost/metatribble/js/";
+      // var metatribbleBase = "http://localhost/~inigosurguy/mt/metatribble/js/";
+      var metatribbleBase = "http://localhost/metatribble/js/";
       //var metatribbleBase = "http://github.com/kal/metatribble/raw/master/js/";
       this.addScriptToHead(metatribbleBase+"enhance.js");
       this.addScriptToHead(metatribbleBase+"realEnhance.js");
@@ -176,4 +184,5 @@ CmdUtils.CreateCommand({
 
 
 });
+
 
