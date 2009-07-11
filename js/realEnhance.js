@@ -47,6 +47,22 @@ function createInfoboxes() {
   createList("Country");
   createList("City");
   createList("Person");
+
+  var bindingMap = {
+        'googleMap': function(t) {
+          // alert('Trigger was '+t.innerHTML+'\nAction was Google map');
+	  var url = "http://maps.google.com/?q="+t.innerHTML;
+          window.location.href = url;
+        },
+        'wikipedia': function(t) {
+          // alert('Trigger was '+t.innerHTML+'\nAction was Wikipedia');
+	  var url = "http://en.wikipedia.org/wiki/"+t.innerHTML;
+          window.location.href = url;
+        }
+  };
+
+  $(".metatribble-infobox li").contextMenu("placeMenu",  { bindings: bindingMap });
+
 }
 
 

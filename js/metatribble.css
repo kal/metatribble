@@ -12,6 +12,7 @@
    background: #fff;
    padding: 1px;
    width: 130px;
+   font-family: Tahoma; sans-serif;
 }
 
 .metatribble-infobox {
@@ -31,6 +32,6 @@
 
 .metatribble-infobox ul {
    padding: 5px;
+   list-style: none;
 }
-
 
