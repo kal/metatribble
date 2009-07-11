@@ -44,32 +44,48 @@ function createInfoboxes() {
 	var types = rdf.where('?inst a ?type').filter(function(){console.log(this); var exists = uniqueTypes[this.type]=="true"; uniqueTypes[this.type]="true"; return !exists;});
 	types.each(function(){console.log("Found a type: " + this)});
 	*/
-  createList("Country");
-  createList("City");
-  createList("Person");
+  var list = ["Country","City","Person"];
+  jQuery.each(list, function() { createList(this); });
 
-  var bindingMap = {
-        'googleMap': function(t) {
-          // alert('Trigger was '+t.innerHTML+'\nAction was Google map');
-	  var url = "http://maps.google.com/?q="+t.innerHTML;
-          window.location.href = url;
-        },
-        'wikipedia': function(t) {
-          // alert('Trigger was '+t.innerHTML+'\nAction was Wikipedia');
-	  var url = "http://en.wikipedia.org/wiki/"+t.innerHTML;
-          window.location.href = url;
-        }
-  };
-
-  $(".metatribble-infobox li").contextMenu("placeMenu",  { bindings: bindingMap });
-
+  var bindingMap = new Object();
+  jQuery.each(actions, function() { bindingMap[""+this.id] = this.fn; });
+  jQuery.each(list, function() { createMenu(this, bindingMap); });
 }
 
+function createMenu(name, bindingMap) {
+  name = ""+name;
+  var menuName = name+"Menu"; 
 
+  var menu = document.createElement("div");
+  menu.setAttribute("class", "contextMenu");
+  menu.setAttribute("id", menuName);
+
+  var listItems = actions.filter(function(t) { return t.types.indexOf(name) != -1; }).map( function(t) { return "<li id='"+t.id+"'>"+t.name+"</li>"; })
+  menu.innerHTML = "<ul>"+listItems.join("")+"</ul>";
+  
+  $("body").append(menu);
+  $("#mti_"+name+" li").contextMenu(menuName,  { bindings: bindingMap });
+}
 
 function logAllTriples() {
   var rdf = $('body').rdf();
   rdf.where("?s ?p ?o").each(function() { console.log("Woo "+this.s+" and "+this.p+" and "+this.o); })
 }
+
+var actions = [ 
+	{ 
+		name : "Wikipedia", 
+		id : "wikipedia", 
+		types : ["Country","City","Person"],
+		fn : function(t) { var url = "http://en.wikipedia.org/wiki/"+t.innerHTML; window.location.href = url; }
+	},
+	{
+		name: "Google maps",
+		id: "googleMap",
+		types: ["Country","City"],
+        	fn: function(t) { var url = "http://en.wikipedia.org/wiki/"+t.innerHTML; window.location.href = url; }
+	}
+];
+
 
 

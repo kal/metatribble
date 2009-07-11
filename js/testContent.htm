@@ -1,0 +1,104 @@
+<html  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"  xmlns="http://www.w3.org/1999/xhtml"
+xmlns:s="http://s.opencalais.com/1/type/em/e/"
+>
+<head>
+<script type="text/javascript" src="jquery-1.2.6.js"></script>
+<script type="text/javascript" src="jquery.uri.js"></script>
+<script type="text/javascript" src="jquery.xmlns.js"></script>
+<script type="text/javascript" src="jquery.curie.js"></script>
+
+<script type="text/javascript" src="jquery.datatype.js"></script>
+<script type="text/javascript" src="jquery.rdf.js"></script>
+<script type="text/javascript" src="jquery.rdfa.js"></script>
+
+<script type="text/javascript" src="http://jqueryui.com/latest/ui/ui.core.js"></script>
+<script type="text/javascript" src="http://jqueryui.com/latest/ui/ui.draggable.js"></script>
+
+<script type="text/javascript" src="enhance.js"></script>
+
+<!-- http://www.trendskitchens.co.nz/jquery/contextmenu/ -->
+<script type="text/javascript" src="jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="jquery.rich-array.js"></script>
+
+<script type="text/javascript" src="realEnhance.js"></script>
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="metatribble.css">
+
+
+
+
+</head>
+
+<body onLoad="createInfoboxes()">
+<div id="content">
+<h1>Metatribble</h1>
+<p>
+Metatribble enables you to create semantic annotations for the people, places and events on web pages,
+and perform additional actions on those annotations.
+</p>
+<p>
+Metatribble is a command for the Firefox plugin Ubiquity. To use it:
+</p>
+<ul>
+<li>Make sure you're using <a href="http://getfirefox.com/">Firefox 3</a>.</li>
+<li><a href="https://ubiquity.mozilla.com/xpi/ubiquity-latest.xpi">Install the Ubiquity plugin</a> and restart your browser.</li>
+<li>Subscribe to the Metatribble command using the subscribe button at the top of the page.</li>
+<li><a href="http://www.opencalais.com/APIkey">Request an OpenCalais API key</a>.</li>
+<li>Activate Ubiquity (typically with Alt-Enter) and run the <em>open-calais-key</em> command, providing your OpenCalais API key</li>
+</ul>
+<p>
+Once Metatribble is installed, it's activated as the <em>metatribble</em> command within Ubiquity. 
+</p>
+<ul>
+<li>Select the text to be marked up (at the moment, a few paragraphs is better than a whole page)</li>
+<li>Activate Ubiquity, and run the <em>metatribble</em> command.</li>
+<li>The page content will be marked up with semantic annotations.</li>
+</ul>
+<h2>About Metatribble</h2>
+<p>
+Metatribble is by <span class="metatribble-rdfa" typeof="s:PersonEmailAddress" property="rdfs:label"><span class="metatribble-rdfa" typeof="s:Person" property="rdfs:label">Kal Ahmed</span> (<span class="metatribble-rdfa" typeof="s:EmailAddress" property="rdfs:label">techquila@gmail.com</span></span>) and Inigo Surguy (<span class="metatribble-rdfa" typeof="s:EmailAddress" property="rdfs:label">inigo.surguy@gmail.com</span>). It has
+been written in <span class="metatribble-rdfa" typeof="s:City" property="rdfs:label">Oxford</span>, <span class="metatribble-rdfa" typeof="s:Country" property="rdfs:label">England</span>. 
+</p>
+<p>
+Metatribble uses Jeni Tennison's <a href="http://code.google.com/p/rdfquery/">rdfquery</a>, and
+Reuter's <a href="http://www.opencalais.com/">OpenCalais</a>.
+</p>
+<h2>Get the source</h2>
+<p>
+You can download this project in either
+<a href="http://github.com/kal/metatribble/zipball/master">zip</a> or
+<a href="http://github.com/kal/metatribble/tarball/master">tar</a> formats.
+</p>
+<p>
+  You can also clone the project with <a href="http://git-scm.com/">Git</a> by running:
+  </p><pre>git clone git://github.com/kal/metatribble</pre>
+
+<p>    
+The source code is on GitHub at <a href="http://github.com/kal/metatribble">kal/metatribble</a>, hosted on a server
+in <span class="metatribble-rdfa" typeof="s:City" property="rdfs:label">San Francisco</span>, <span class="metatribble-rdfa" typeof="s:ProvinceOrState" property="rdfs:label">California</span>.
+</p>
+
+</div>
+
+    <div class="contextMenu" id="placeMenu">
+      <ul>
+        <li id="googleMap">Google map</li>
+        <li id="wikipedia">Wikipedia</li>
+      </ul>
+    </div>
+
+  <div class="contextMenu" id="personMenu">
+      <ul>
+        <li id="wikipedia">Wikipedia</li>
+      </ul>
+    </div>
+
+
+</body>
+
+
+</html>
